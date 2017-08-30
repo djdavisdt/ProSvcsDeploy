@@ -1,0 +1,32 @@
+#!/bin/sh
+# Deployment script
+# @djdavis
+
+createDir () {
+  VERSION=1
+  DEPLOYPATH="/export/sites/custom-dev.dialogtech.com/releases/$DATE"
+  while ! mkdir $DEPLOYPATH-$VERSION
+  do
+    VERSION=$((VERSION+1))
+  done
+  local FINALPATH=$DEPLOYPATH-$VERSION
+  echo "$FINALPATH"
+}
+
+gitClone() {
+  git clone https://djdavisdt:3bacde20835cecae7dd86a7b82f1d48a138731da@github.com/djdavisdt/customer_integrations.git $1
+}
+
+if [ ! -z "$1" ]; then
+ DATE="$1"
+ RESULT=$(createDir)
+ echo "$RESULT successfully created"
+ gitClone $RESULT
+ cd $RESULT
+else
+ DATE="$(date +%Y%m%d)"
+ RESULT=$(createDir)
+ echo "$RESULT successfully created"
+ gitClone $RESULT
+ cd $RESULT
+fi
